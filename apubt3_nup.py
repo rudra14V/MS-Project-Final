@@ -26,21 +26,6 @@ import numpy as np
 from PIL import Image
 
 
-APUBT3_8 = np.array(
-    [
-        [0.1250, 0.1250, 0.1250, 0.1250, 0.1250, 0.1250, 0.1250, 0.1250],
-        [0.1094, 0.0845, 0.0451, 0.0369, 0.0079, -0.0435, -0.1093, -0.1310],
-        [0.0937, 0.0502, -0.0198, -0.0545, -0.0986, -0.0948, 0.0136, 0.1101],
-        [0.0781, 0.0094, -0.0658, -0.0768, -0.0315, 0.0851, 0.0796, -0.0780],
-        [0.0625, -0.0310, -0.0658, -0.0176, 0.0712, 0.0410, -0.1029, 0.0453],
-        [0.0469, -0.0559, -0.0295, 0.0434, 0.0432, -0.0932, 0.0638, -0.0187],
-        [0.0313, -0.0588, 0.0217, 0.0354, -0.0598, 0.0453, -0.0197, 0.0046],
-        [0.0156, -0.0391, 0.0394, -0.0233, 0.0112, -0.0057, 0.0023, -0.0005],
-    ],
-    dtype=np.float64,
-)
-
-
 def _legendre_u_degree3_basis(n: int) -> np.ndarray:
     """Build a discrete U-system degree-3-like basis and orthogonalize it."""
     xs = (np.arange(n, dtype=np.float64) + 0.5) / n
@@ -57,20 +42,6 @@ def _legendre_u_degree3_basis(n: int) -> np.ndarray:
     mat = np.vstack(rows[:n])
     q, _ = np.linalg.qr(mat.T)
     return q.T
-
-
-def _all_phase_matrix(core: np.ndarray, iterations: int) -> np.ndarray:
-    """Approximate the APDF iteration used by APUBT3 for arbitrary block sizes."""
-    a = core.astype(np.float64)
-    for _ in range(iterations):
-        inv = np.linalg.pinv(a)
-        nxt = np.zeros_like(a)
-        n = a.shape[0]
-        for j in range(n):
-            width = n - j
-            nxt[:, j] = np.sum(inv[:, j:] * a[:, :width], axis=1) / n
-        a = nxt
-    return a
 
 
 def apubt3_matrix(size: int) -> np.ndarray:
