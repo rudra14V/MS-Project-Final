@@ -331,7 +331,7 @@ def encode_apubt3(
     metadata["target_bytes"] = target_bytes
     metadata["compressed_bytes"] = output_path.stat().st_size
     metadata["bpp"] = output_path.stat().st_size * 8 / (h * w)
-    metadata["compression_ratio"] = output_path.stat().st_size / input_path.stat().st_size
+    metadata["compression_ratio"] = input_path.stat().st_size / output_path.stat().st_size
     metadata["target_reached"] = output_path.stat().st_size <= target_bytes
     return metadata
 
@@ -431,7 +431,7 @@ def export_jpeg(
     metadata["target_bytes"] = target_bytes
     metadata["compressed_bytes"] = compressed_bytes
     metadata["jpeg_save_quality"] = jpeg_quality
-    metadata["compression_ratio"] = compressed_bytes / original_bytes
+    metadata["compression_ratio"] = original_bytes / compressed_bytes
     metadata["is_smaller_than_original"] = compressed_bytes < original_bytes
     metadata["target_reached"] = compressed_bytes <= target_bytes
     return metadata
